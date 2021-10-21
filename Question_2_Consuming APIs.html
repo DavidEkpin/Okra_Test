@@ -87,9 +87,8 @@
       
       var data = JSON.parse(this.responseText);
       balance =  data.data.wallet.amount + " " + data.data.wallet.currency
-    }
 
-    //Make refund
+      //Make refund
     var refundRequest = new XMLHttpRequest();
     refundRequest.open("POST", "https://api.okra.ng/v2/mock-api/pay", true);
     refundRequest.setRequestHeader('Content-Type', 'application/json');
@@ -105,8 +104,9 @@
      
       balanceAfterRefund = data.data.wallets.to.amount + " " + data.data.wallets.to.currency
      
-      //Output Balance before and After Refund
+      //Output Balance befor and After Refund
       console.log('Initial Balance =>', balance, '\nBalance After Refund =>', balanceAfterRefund)
+    }
     }
     
     
