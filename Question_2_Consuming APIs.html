@@ -72,8 +72,11 @@
 </body>
 <script>
   function refundCustomer(company, user, amount) {
-    //Get User Wallet Balance
     
+    let balance = ""
+    let balanceAfterRefund = ""
+
+    //Get User Wallet Balance
     var request = new XMLHttpRequest();
     request.open("POST", "https://api.okra.ng/v2/mock-api/fetch-wallet", true);
     request.setRequestHeader('Content-Type', 'application/json');
@@ -81,12 +84,9 @@
       id: user
     }));
     request.onload = function () {
-
       
       var data = JSON.parse(this.responseText);
-      //Output Balance
-      console.log("Users Current Balance:" + " " + data.data.wallet.amount)
-      
+      balance =  data.data.wallet.amount + " " + data.data.wallet.currency
     }
 
     //Make refund
@@ -102,10 +102,13 @@
 
       
       var data = JSON.parse(this.responseText);
-      //New Balance
-      console.log("Refund Successful, Your new Balance is:" + " " + data.data.wallets.to.amount)
-
+     
+      balanceAfterRefund = data.data.wallets.to.amount + " " + data.data.wallets.to.currency
+     
+      //Output Balance befor and After Refund
+      console.log('Initial Balance =>', balance, '\nBalance After Refund =>', balanceAfterRefund)
     }
+    
     
   }
   

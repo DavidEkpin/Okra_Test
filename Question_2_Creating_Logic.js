@@ -14,49 +14,60 @@ function Login (userName, passWord) {
 
       
       var data = JSON.parse(this.responseText);
-      console.log(data.data.profile)
-
+      console.log("Login Successful for" + " " + data.data.profile.name)
+      console.log('Your current balance is:', data.data.profile.wallet.amount + " " +  data.data.profile.wallet.currency)
+     
       //store users Id in local storage
-      window.localStorage.setItem('userId', JSON.stringify(data.data.profile.id));
+      window.localStorage.setItem('userId', data.data.profile.id);
       //store Users Profile
       window.localStorage.setItem('user', JSON.stringify(data.data.profile));
+      //store Users Wallet Amount
+      window.localStorage.setItem('wallet', JSON.stringify(data.data.profile.wallet.amount + " " +  data.data.profile.wallet.currency));
     }
 
 }
 
-//Refresh users wallet with stored Id, Experiencing 500 errors when I try to do so using details provided
+//Refresh users wallet with stored Id
 function refreshWallet () {
-  console.log(window.localStorage.getItem('userId'))
+  
   var request = new XMLHttpRequest();
     request.open("POST", "https://api.okra.ng/v2/mock-api/refresh-wallet", true);
     request.setRequestHeader('Content-Type', 'application/json');
     request.send(JSON.stringify({
-      wallet_id: window.localStorage.getItem('userId'),
-      variable: "mockVariable"
+
+      //User stored Id to refresh wallet
+      id: window.localStorage.getItem('userId'),
+      variable: 'mockVariable'
     }));
     request.onload = function () {
 
       var data = JSON.parse(this.responseText);
-      console.log(data.data)
-
+      
+      //Save latest balance in local storage
+      window.localStorage.setItem('walletAfterRefresh', JSON.stringify(data.data.wallet.amount + " " +  data.data.wallet.currency));
       //Display users current Balance
+      console.log('Current Balance => ', {Amount: data.data.wallet.amount, Currency: data.data.wallet.currency})
       
     }
 
 }
 
-//Logout function, Unalbe to refresh due to 500 erros on the refresh endpoint
+//Logout function
 function logOut () {
   
   var request = new XMLHttpRequest();
-    request.open("GET", "https://api.okra.ng/v2/mock-api/logout", false);
+    request.open("GET", "https://api.okra.ng/v2/mock-api/logout", true);
     request.send();
-    var data = JSON.parse(request.responseText);
+    request.onload = function () {
+
+    var data = JSON.parse(this.responseText);
 
     let userDetails = JSON.parse(window.localStorage.getItem('user'))
+    let walletBeforeRefresh = JSON.parse(window.localStorage.getItem('wallet'))
+    let walletAfterRefresh = JSON.parse(window.localStorage.getItem('walletAfterRefresh'))
     
       //Display Log out message
-      console.log('User => ', {id: userDetails.id, name: userDetails.name}, '\Logout Message =>', data.message)
+      console.log('User => ', {id: userDetails.id, name: userDetails.name}, '\nBalance Before Refresh =>', walletBeforeRefresh, '\nBalance After Refresh =>', walletAfterRefresh, '\nLogout Message =>', data.message)
   
-
+    }
 }
